@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PizzaSearch</title>
+<style>
+:root{--bg:#fbf3e4;--card:#fffaf0;--ink:#2b2522;--mut:#7a6d63;--red:#d6361f;--org:#f08a24;--chz:#f6c63c;--line:#ecdcc0;--pr:#3a3226;--prt:#f6c63c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1916;--card:#282320;--ink:#f6ecdc;--mut:#b3a595;--line:#3b332d;--pr:#f6c63c;--prt:#2b2522}}
+:root[data-theme="dark"]{--bg:#1d1916;--card:#282320;--ink:#f6ecdc;--mut:#b3a595;--line:#3b332d;--pr:#f6c63c;--prt:#2b2522}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Trebuchet MS","Segoe UI",system-ui,sans-serif;transition:background .3s}
+h1,h2,h3,.logo{font-family:Georgia,"Palatino Linotype",serif;letter-spacing:-.01em}
+nav{display:flex;gap:4px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;overflow-x:auto}
+nav button{background:none;border:0;color:var(--ink);padding:8px 12px;border-radius:99px;cursor:pointer;font:inherit;white-space:nowrap;transition:.2s}
+nav button:hover,nav button.on{background:var(--red);color:#fff}
+nav .sp{flex:1}
+.logo{font-weight:700;font-size:22px;display:flex;align-items:center;gap:6px;white-space:nowrap;margin-right:8px}
+main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
+.view{display:none}.view.on{display:block}
+.hero{text-align:center;padding:30px 0 10px}
+.hero .logo{font-size:clamp(40px,9vw,76px);justify-content:center}
+.sbar{display:flex;gap:8px;max-width:640px;margin:22px auto 10px;background:var(--card);border:2px solid var(--line);border-radius:99px;padding:6px 6px 6px 18px;transition:.2s}
+.sbar:focus-within{border-color:var(--red);box-shadow:0 6px 24px #d6361f33}
+.sbar input{flex:1;border:0;background:none;color:var(--ink);font:inherit;font-size:18px;outline:none;min-width:0}
+.btn{border:0;border-radius:99px;padding:10px 18px;font:inherit;font-weight:700;cursor:pointer;background:var(--red);color:#fff;transition:.15s}
+.btn:hover{transform:translateY(-2px) rotate(-1deg);filter:brightness(1.08)}.btn.alt{background:var(--chz);color:#2b2522}.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:5px 14px;cursor:pointer;font-size:14px;transition:.15s;color:var(--ink)}.chip:hover{background:var(--chz);color:#2b2522}
+.grid{display:grid;gap:14px}.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 2px 10px #0000000d}
+.meme{font-family:Georgia,serif;font-size:20px;min-height:90px;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,var(--chz),var(--org));color:#2b2522;border-radius:18px;padding:18px;transition:.3s}
+.meter{height:16px;border-radius:99px;background:var(--line);overflow:hidden;margin:8px 0}.meter i{display:block;height:100%;width:10%;background:linear-gradient(90deg,var(--chz),var(--org),var(--red));transition:width 1.2s cubic-bezier(.3,1.4,.5,1)}
+.res{display:grid;grid-template-columns:48px 1fr;gap:12px;margin:12px 0;animation:pop .45s both}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}}
+.rk{width:44px;height:44px;border-radius:50%;background:var(--red);color:#fff;font-weight:700;display:grid;place-items:center;font-size:19px}
+.url{color:#2f7d4a;font-size:14px}.res h3{margin:0;font-size:20px;color:var(--red)}
+.bd{display:inline-block;font-size:13px;border-radius:99px;padding:2px 10px;margin:4px 6px 0 0;font-weight:700}.bf{background:var(--org);color:#2b2522}.bp{background:var(--pr);color:var(--prt)}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start}
+@media(max-width:700px){.vs{grid-template-columns:1fr}}
+.side{border-radius:18px;padding:16px}.sf{background:#d6361f1f;border:2px solid var(--red)}.sp2{background:#f6c63c26;border:2px solid var(--chz)}
+.vsb{font:900 52px Georgia,serif;color:var(--red);align-self:center;animation:vs 1.4s infinite ease-in-out;text-align:center}
+@keyframes vs{50%{transform:scale(1.25) rotate(-8deg)}}
+.row{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:10px;margin:5px 0;background:var(--card);animation:pop .4s both}.row.top{outline:2px solid var(--chz);font-weight:700}
+.banner{text-align:center;font:700 24px Georgia,serif;margin:14px 0;padding:12px;border-radius:14px;background:var(--card);border:2px dashed var(--red)}
+table{width:100%;border-collapse:collapse}th,td{padding:8px;text-align:left;border-bottom:1px solid var(--line)}.wrap{overflow-x:auto}
+.up{color:#2f9d55;font-weight:700}.dn{color:var(--red);font-weight:700}
+.stat b{display:block;font:700 30px Georgia,serif;color:var(--red)}
+canvas{max-width:100%}
+.mod{position:fixed;inset:0;background:#000a;display:none;place-items:center;z-index:20;padding:16px}.mod.on{display:grid}
+.mod .card{max-width:420px;text-align:center}
+.oven{display:none;position:fixed;inset:0;background:var(--bg);z-index:15;place-items:center;text-align:center}.oven.on{display:grid}
+.ov{width:200px;height:110px;border:6px solid var(--ink);border-radius:20px 20px 8px 8px;margin:0 auto 14px;position:relative;overflow:hidden;background:#3a2a20}
+.ov span{position:absolute;font-size:52px;left:-60px;top:22px;animation:slide 1.1s forwards}
+@keyframes slide{to{left:70px;opacity:.5;transform:scale(.7)}}
+.conf{position:fixed;top:-30px;font-size:24px;z-index:30;pointer-events:none;animation:fall 2.2s linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg)}}
+.float{position:fixed;font-size:28px;opacity:.18;pointer-events:none;animation:fl 8s infinite ease-in-out}
+@keyframes fl{50%{transform:translateY(-30px) rotate(25deg)}}
+#gsvg g.n{cursor:pointer;animation:pop .6s both}#gsvg g.n:hover circle{stroke-width:5}
+footer{text-align:center;padding:30px 16px;color:var(--mut);border-top:1px solid var(--line)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+code{background:var(--line);padding:2px 6px;border-radius:6px}
+.bar{height:6px;border-radius:9px;background:var(--line);margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;border-radius:9px;transition:width .8s}
+mark{background:var(--chz);color:#2b2522;border-radius:3px;padding:0 2px}
+</style></head><body>
+<nav><div class="logo"><svg width="28" height="28" viewBox="0 0 32 32"><path d="M16 30 3 6q13-6 26 0z" fill="#f6c63c" stroke="#d6361f" stroke-width="2.5" stroke-linejoin="round"/><circle cx="12" cy="11" r="2.4" fill="#d6361f"/><circle cx="19" cy="13" r="2.4" fill="#d6361f"/><circle cx="15.5" cy="20" r="2.2" fill="#d6361f"/></svg>PizzaSearch</div>
+<button data-v="home">Home</button><button data-v="search">Search</button><button data-v="battle">Algorithm Battle</button><button data-v="analytics">Analytics</button><button data-v="graph">Link Graph</button><button data-v="about">About</button><span class="sp"></span><button id="theme" title="Toggle theme">🌓</button></nav>
+<main>
+<section class="view" id="home"><div class="hero"><div class="logo">🍕 MiniGoogle</div><p style="font-size:20px;margin:6px 0">Your search results are freshly baked.</p><p style="color:var(--mut);margin:0">Searching the internet, one slice at a time.</p>
+<div class="sbar"><input id="q" autocomplete="off"><button class="btn ghost" id="clr" title="Clear">✕</button><button class="btn" id="go">🍕 Search</button></div>
+<div class="chips"><button class="btn alt" id="rnd">🎲 Random search</button></div>
+<div class="chips" id="trend"></div><div class="chips" id="hist" style="opacity:.8"></div></div>
+<div class="grid g3" style="margin-top:20px"><div class="meme" id="meme"></div>
+<div class="card"><h3 style="margin-top:0">How hungry are you?</h3><div class="meter"><i id="mt"></i></div><b id="ms">Slightly Hungry</b> <button class="chip" id="mb">Measure again</button></div>
+<div class="card"><h3 style="margin-top:0">Pizza fact of the day</h3><p id="fact"></p><button class="chip" id="fb">Another fact</button></div></div>
+<p style="text-align:center;margin-top:24px;color:var(--mut)" id="egg"></p></section>
+
+<section class="view" id="search"><div class="sbar"><input id="q2" autocomplete="off"><button class="btn" id="go2">Search</button></div>
+<div class="chips" id="sugg"></div><div id="summary" style="margin:6px 0"></div>
+<div class="chips"><button class="btn alt" id="rc">Recalculate PageRank</button><button class="btn ghost" onclick="show('battle')">⚔️ Full battle view</button></div><div id="verdict"></div><div id="results"></div></section>
+
+<section class="view" id="battle"><h2 style="text-align:center;font-size:34px">THE GREAT RANKING BATTLE ⚔️</h2><div id="bq" style="text-align:center;color:var(--mut)"></div><div id="bdata"></div></section>
+
+<section class="view" id="analytics"><h2>Analytics</h2><div class="grid g4" id="stats"></div>
+<div class="grid g3" style="margin-top:14px"><div class="card"><h3>Frequency scores</h3><canvas id="c1"></canvas></div><div class="card"><h3>PageRank scores</h3><canvas id="c2"></canvas></div><div class="card"><h3>Rank comparison</h3><canvas id="c3"></canvas></div><div class="card"><h3>Ranking movement</h3><canvas id="c4"></canvas></div></div></section>
+
+<section class="view" id="graph"><h2>Website link graph</h2><p>Arrows show outgoing links. Bigger circles hold more PageRank. Click a site to see who links to it.</p>
+<div class="grid g3" style="grid-template-columns:2fr 1fr"><div class="card"><svg id="gsvg" viewBox="0 0 600 440" width="100%"></svg></div><div class="card" id="ginfo">Hover or click a node.</div></div></section>
+
+<section class="view" id="about"><h2>Behind the slice: how it works</h2>
+<div class="grid g3"><div class="card"><h3>🔤 Frequency ranking</h3><p>Count how many times each query word appears on a page. Add the counts. The page with the highest total wins.</p><p><code>Score = Σ occurrences of every query term</code></p><p>Example: “pizza” appears 15, 9 and 4 times on three pages, so they rank 1, 2, 3. Easy to fool: repeat a word 500 times and you win.</p></div>
+<div class="card"><h3>🕸️ PageRank</h3><p>A page is important if important pages link to it. Each page splits its rank equally among the pages it links to, and the process repeats until scores settle.</p><p><code>PR(A) = (1−d)/N + d × Σ PR(Ti)/C(Ti)</code></p><p>d = 0.85, N = 6 sites. Dangling pages share their rank with everyone. It ignores the query, so we filter by keyword first, then sort by PageRank.</p></div></div>
+<div class="card wrap" style="margin-top:14px"><table><tr><th>Feature</th><th>Frequency</th><th>PageRank</th></tr><tr><td>Based on</td><td>Keywords</td><td>Links</td></tr><tr><td>Query dependent</td><td>Yes</td><td>No</td></tr><tr><td>Main concept</td><td>Term occurrence</td><td>Link importance</td></tr><tr><td>Output</td><td>Frequency score</td><td>PageRank score</td></tr></table></div>
+<p style="text-align:center;margin-top:18px" id="about-egg"></p></section>
+</main>
+<footer><p>Made with Algorithms, Cheese &amp; Unlimited Pizza.</p><p>Your Search Results, Freshly Baked. Don’t just search. Get a slice of knowledge.</p></footer>
+
+<div class="oven" id="oven"><div><div class="ov"><span>🍕</span></div><b id="om">Preheating the search engine…</b></div></div>
+<div class="mod" id="mod"><div class="card"><h2 style="color:var(--red)">WARNING: CONTROVERSIAL SEARCH DETECTED!</h2><p>Is pineapple on pizza a crime or a masterpiece?</p><button class="btn alt" data-t="🍍 Team Pineapple chosen. Bold.">Team Pineapple 🍍</button> <button class="btn" data-t="🚫 Team No Pineapple chosen. Traditional.">Team No Pineapple 🚫</button></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+/* ---------- LOCAL DATASET (6 mock sites) ---------- */
+const SITES=[
+{id:"purr-food-guide.com",title:"Purr Food Guide",desc:"Cat-approved food guide with restaurants, cheese picks and where to eat.",out:["best-pizza-bune.com","cheap-eats-bune.com","pizza-recipes-home.com"],
+text:"Welcome to the Purr Food Guide. Our food critics recommend restaurants for every mood. Food should be fun, food should be fresh. This week we rank restaurants by cheese quality, from nacho cheese to mozzarella. A good restaurant serves honest food. Try a pizza night once a month, but our guide covers noodles, tacos, and bakeries too. Food lovers trust our restaurants list."},
+{id:"best-pizza-bune.com",title:"Best Pizza Bune",desc:"Honest reviews of the best pizza restaurants, ranked slice by slice.",out:["purr-food-guide.com","pizza-recipes-home.com"],
+text:"Best Pizza Bune reviews the best pizza in town. Our best pizza award goes to restaurants with crisp crust and fresh cheese. Every pizza review covers sauce, crust and cheese. The best pizza restaurants earn a golden slice. Read the pizza reviews, then pick your restaurant. Good pizza is worth the trip."},
+{id:"college-content-blog.com",title:"College Content Blog",desc:"Student life, deadlines and college food survival tips.",out:["best-pizza-bune.com","cheap-eats-bune.com","purr-food-guide.com"],
+text:"College life runs on caffeine and deadlines. This blog shares college food tips for students in dorms. College food means instant noodles, cafeteria trays, and sometimes pizza after an exam. We list cheap pizza deals near campus, plus easy food for study groups. Every college student needs a food plan and a good restaurant for celebrating finals."},
+{id:"pizza-recipes-home.com",title:"Pizza Recipes at Home",desc:"Homemade pizza recipes: dough, sauce and cheese from scratch.",out:["best-pizza-bune.com"],
+text:"Homemade pizza starts with dough. These pizza recipes show homemade pizza from scratch: flour, yeast, tomato sauce and cheese. Our homemade pizza dough rests overnight. Try pizza recipes with extra cheese, basil, or pepperoni. A homemade pizza beats takeout, and the recipes are simple. Bake the pizza hot, around 250 degrees. Homemade is happiness."},
+{id:"cheap-eats-bune.com",title:"Cheap Eats Bune",desc:"Budget food guide for broke students: cheap pizza, cheap noodles, cheap everything.",out:["college-content-blog.com","best-pizza-bune.com"],
+text:"Cheap eats for broke students. Cheap food does not mean bad food. Find cheap pizza slices, cheap noodles and budget meals. A cheap pizza lunch costs less than coffee. Our cheap food guide compares prices at every restaurant near campus. Save money, eat well, and share the cheap pizza with friends."},
+{id:"pizza-pizza-pizza.com",title:"Pizza Pizza Pizza",desc:"All pizza, all the time. Pizza history, pizza facts, pizza everything.",out:["best-pizza-bune.com","pizza-recipes-home.com"],
+text:"Pizza pizza pizza! Pizza is life. Pizza history starts in Naples, and pizza facts are our hobby. Pizza toppings, pizza crust, pizza sauce, pizza cheese, pizza boxes, pizza slices: pizza, pizza, pizza. Every pizza lover loves pizza. Pizza for breakfast, pizza for lunch, pizza at midnight. Order a pizza. Share a pizza. Pizza forever."}];
+const WORDS=SITES.map(s=>s.text.toLowerCase().match(/[a-z]+/g));
+const STOP=new Set("a the to how for of or in me near and is an on".split(" "));
+const MEMES=["Me: I’ll eat healthy today. Also me: orders extra cheese pizza.","Searching for pizza because Google can’t fix my hunger.","404: Diet not found.","Calories don’t count when you’re happy.","Relationship status: committed to pizza.","Algorithms don’t lie, but your diet might.","Ranking websites is easier than deciding what to order.","PageRank is important. PizzaRank is more important.","Google indexes websites. We index cravings."];
+const PH=["Best pizza near college","How to make perfect pizza?","Cheap food for broke students","Extra cheese or extra happiness?","Best pizza recipes"];
+const TREND=["pizza","best pizza","cheap pizza","homemade pizza","food","cheese","college food","pizza recipes","restaurants","pineapple pizza"];
+const FACTS=["Pizza Margherita (1889) was named after Queen Margherita of Savoy.","Americans eat about 100 acres of pizza every day.","The first pizzeria opened in Naples in 1738.","Pepperoni is America’s favorite topping.","Italian pizza dough often rests 24 hours or more."];
+const HUNGER=["Slightly Hungry","Pizza Craving","Extremely Hungry","Ordering Everything"];
+
+/* ---------- ALGORITHMS ---------- */
+// PageRank: PR(A)=(1-d)/N + d*Σ PR(Ti)/C(Ti); dangling nodes share rank equally; stops at convergence or 100 iterations.
+function pageRank(d=0.85){
+ const N=SITES.length,idx=Object.fromEntries(SITES.map((s,i)=>[s.id,i]));
+ let pr=Array(N).fill(1/N),it=0;
+ for(;it<100;){it++;
+  const dangling=SITES.reduce((a,s,i)=>a+(s.out.length?0:pr[i]),0);
+  const nx=Array(N).fill((1-d)/N+d*dangling/N);
+  SITES.forEach((s,i)=>s.out.forEach(t=>nx[idx[t]]+=d*pr[i]/s.out.length));
+  const diff=nx.reduce((a,v,i)=>a+Math.abs(v-pr[i]),0);pr=nx;if(diff<1e-10)break}
+ const sum=pr.reduce((a,b)=>a+b,0);
+ return{scores:pr.map(v=>v/sum),iters:it};
+}
+// Frequency score = sum of occurrences of all query terms in page content.
+function freqScore(i,toks){return toks.reduce((a,t)=>a+WORDS[i].filter(w=>w===t).length,0)}
+function tokens(q){return(q.toLowerCase().match(/[a-z]+/g)||[]).filter(t=>!STOP.has(t))}
+function runSearch(q){
+ const toks=tokens(q);
+ const docs=SITES.map((s,i)=>({s,i,f:freqScore(i,toks),p:PR.scores[i]})).filter(d=>d.f>0);
+ // deterministic tie-breaks: frequency ties -> PageRank, then title; PageRank ties -> frequency, then title
+ const fr=[...docs].sort((a,b)=>b.f-a.f||b.p-a.p||a.s.title.localeCompare(b.s.title));
+ const pr=[...docs].sort((a,b)=>b.p-a.p||b.f-a.f||a.s.title.localeCompare(b.s.title));
+ docs.forEach(d=>{d.fr=fr.indexOf(d)+1;d.pr=pr.indexOf(d)+1;d.ch=d.fr-d.pr});
+ return{fr,pr,docs};
+}
+
+/* ---------- STATE / HELPERS ---------- */
+const $=id=>document.getElementById(id);
+let PR=pageRank(),R=runSearch("pizza"),sortBy="f",searches=0,lastQ="pizza",charts={};
+let hist=[];try{hist=JSON.parse(localStorage.getItem("ps_hist")||"[]")}catch(e){}
+try{searches=+localStorage.getItem("ps_n")||0}catch(e){}
+const pct=v=>(v*100).toFixed(2)+"%";
+function chips(el,arr){el.innerHTML="";arr.forEach(t=>{const b=document.createElement("button");b.className="chip";b.textContent=t;b.onclick=()=>search(t);el.append(b)})}
+function confetti(n=40){for(let i=0;i<n;i++){const c=document.createElement("span");c.className="conf";c.textContent=["🍕","🧀","🍅","✨"][i%4];c.style.left=Math.random()*100+"vw";c.style.animationDelay=Math.random()*.6+"s";document.body.append(c);setTimeout(()=>c.remove(),3000)}}
+function show(v){document.querySelectorAll(".view").forEach(e=>e.classList.toggle("on",e.id===v));document.querySelectorAll("nav button[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===v));scrollTo(0,0);if(v==="analytics")charts_();if(v==="battle")battle();if(v==="graph")graph()}
+document.querySelectorAll("nav button[data-v]").forEach(b=>b.onclick=()=>show(b.dataset.v));
+
+/* ---------- SEARCH FLOW ---------- */
+function search(q){
+ q=(q||"").trim();if(!q)return;
+ $("q").value=$("q2").value=q;lastQ=q;
+ hist=[q,...hist.filter(h=>h!==q)].slice(0,6);searches++;
+ try{localStorage.setItem("ps_hist",JSON.stringify(hist));localStorage.setItem("ps_n",searches)}catch(e){}
+ const msgs=["Preheating the search engine…","Adding extra cheese to results…","Baking your search results…","Almost ready, chef!"];let k=0;
+ $("oven").classList.add("on");$("om").textContent=msgs[0];
+ const t=setInterval(()=>$("om").textContent=msgs[++k%4],300);
+ setTimeout(()=>{clearInterval(t);$("oven").classList.remove("on");R=runSearch(q);results();show("search");
+  if(/pineapple/i.test(q))$("mod").classList.add("on");
+  if(R.docs.length>1&&R.fr[0]!==R.pr[0])confetti(24)},1250);
+}
+function results(){
+ chips($("hist"),hist.length?hist.map(h=>h):[]);chips($("sugg"),TREND.slice(0,6));
+ const w=R.docs.length;
+ $("summary").innerHTML=w?`<b>${w}</b> result${w>1?"s":""} for “${lastQ}” · both rankings side by side · PageRank converged in ${PR.iters} iterations`:`No pages match “${lastQ}”. Try one of the suggestions below.`;
+ const hl=t=>{let x=t;tokens(lastQ).forEach(k=>x=x.replace(new RegExp("\\b("+k+")\\b","gi"),"<mark>$1</mark>"));return x};
+ const mx=Math.max(1,...R.docs.map(d=>d.f)),mp=Math.max(1e-9,...R.docs.map(d=>d.p)),inc=d=>SITES.filter(x=>x.out.includes(d.s.id)).length;
+ const col=(arr,k)=>arr.map((d,i)=>`<div class="res" style="animation-delay:${i*90}ms"><div class="rk" style="background:${k==="f"?"var(--org)":"var(--pr)"};color:${k==="f"?"#2b2522":"var(--prt)"}">${i+1}</div><div><div class="url">${d.s.id}</div><h3>${d.s.title}</h3><div>${hl(d.s.desc)}</div><div class="bar"><i style="width:${(k==="f"?d.f/mx:d.p/mp)*100}%;background:${k==="f"?"var(--org)":"var(--pr)"}"></i></div><span class="bd ${k==="f"?"bf":"bp"}">${k==="f"?"Frequency: "+d.f:"PageRank: "+d.p.toFixed(4)}</span><span class="bd" style="background:var(--line)">${k==="f"?"PageRank rank #"+d.pr:"Frequency rank #"+d.fr}</span></div></div>`).join("");
+ $("verdict").innerHTML=w?(R.fr[0]===R.pr[0]?`<div class="banner">UNANIMOUS VICTORY! BOTH ALGORITHMS AGREE: ${R.fr[0].s.title} 🏆</div>`:`<div class="banner">WE HAVE A RANKING DISAGREEMENT!<div style="font:15px sans-serif;margin-top:6px">🔤 Frequency picks <b>${R.fr[0].s.title}</b> (${R.fr[0].f} keyword matches) · 🕸️ PageRank picks <b>${R.pr[0].s.title}</b> (${inc(R.pr[0])} sites link to it)</div></div>`):"";
+ $("results").innerHTML=w?`<div class="vs"><div class="side sf"><h3>🔤 Frequency ranking</h3>${col(R.fr,"f")}</div><div class="vsb">VS</div><div class="side sp2"><h3>🕸️ PageRank</h3>${col(R.pr,"p")}</div></div>`:"";
+ $("results").innerHTML+=w?`<div class="card wrap" style="margin-top:14px"><h3 style="margin-top:0">Rank comparison</h3><table><tr><th>Website</th><th>Frequency rank</th><th>PageRank rank</th><th>Change</th></tr>${R.fr.map(d=>`<tr><td>${d.s.title}</td><td>${d.fr}</td><td>${d.pr}</td><td class="${d.ch>0?"up":d.ch<0?"dn":""}">${d.ch>0?"▲ "+d.ch:d.ch<0?"▼ "+-d.ch:"–"}</td></tr>`).join("")}</table></div>`:"";
+}
+
+$("rc").onclick=()=>{PR=pageRank();R=runSearch(lastQ);results();confetti(10);$("summary").insertAdjacentHTML("beforeend"," · recalculated ✅")};
+
+/* ---------- BATTLE ---------- */
+function battle(){
+ $("bq").textContent=`Query: “${lastQ}” · ${R.docs.length} matching sites`;
+ const D=R.docs;if(!D.length){$("bdata").innerHTML="<div class='card'>Search for something first. Nothing matched yet.</div>";return}
+ const same=R.fr[0]===R.pr[0],col=(arr,k)=>arr.map((d,i)=>`<div class="row ${i?"":"top"}" style="animation-delay:${i*80}ms"><span>${i?i+1:"🏆"} ${d.s.title}</span><span>${k==="f"?d.f:d.p.toFixed(4)}</span></div>`).join("");
+ const imp=[...D].sort((a,b)=>b.ch-a.ch)[0],dec=[...D].sort((a,b)=>a.ch-b.ch)[0];
+ $("bdata").innerHTML=`<div class="vs"><div class="side sf"><h3>🔤 Frequency Ranking</h3>${col(R.fr,"f")}</div><div class="vsb">VS</div><div class="side sp2"><h3>🕸️ PageRank</h3>${col(R.pr,"p")}</div></div>
+ <div class="banner">${same?"UNANIMOUS VICTORY! BOTH ALGORITHMS AGREE!":"WE HAVE A RANKING DISAGREEMENT!"}</div>
+ <div class="grid g4"><div class="card">🏆 Frequency winner<br><b>${R.fr[0].s.title}</b></div><div class="card">🏆 PageRank winner<br><b>${R.pr[0].s.title}</b></div><div class="card">📈 Biggest improvement<br><b>${imp.ch>0?imp.s.title+" (+"+imp.ch+")":"None"}</b></div><div class="card">📉 Biggest decline<br><b>${dec.ch<0?dec.s.title+" ("+dec.ch+")":"None"}</b></div></div>
+ <div class="card wrap" style="margin-top:14px"><table><tr><th>Website</th><th>Frequency rank</th><th>PageRank rank</th><th>Rank change</th></tr>${R.fr.map(d=>`<tr><td>${d.s.title}</td><td>${d.fr}</td><td>${d.pr}</td><td class="${d.ch>0?"up":d.ch<0?"dn":""}">${d.ch>0?"▲ "+d.ch:d.ch<0?"▼ "+-d.ch:"– 0"}</td></tr>`).join("")}</table></div>
+ <p style="text-align:center;color:var(--mut)">PageRank is important. PizzaRank is more important.</p>`;
+ if(!same&&D.length>1)confetti(24);
+}
+
+/* ---------- ANALYTICS ---------- */
+function charts_(){
+ const D=R.docs,tx=getComputedStyle(document.documentElement).getPropertyValue("--ink").trim();
+ Chart.defaults.color=tx;
+ $("stats").innerHTML=[["Indexed websites",SITES.length],["Total searches",searches],["Highest frequency",D.length?R.fr[0].f:0],["Highest PageRank",Math.max(...PR.scores).toFixed(4)]].map(a=>`<div class="card stat"><b>${a[1]}</b>${a[0]}</div>`).join("");
+ const mk=(id,cfg)=>{charts[id]&&charts[id].destroy();charts[id]=new Chart($(id),cfg)};
+ const names=R.fr.map(d=>d.s.title.split(" ").slice(0,2).join(" "));
+ const base={options:{responsive:true,plugins:{legend:{display:false}}}};
+ mk("c1",{type:"bar",data:{labels:names,datasets:[{data:R.fr.map(d=>d.f),backgroundColor:"#f08a24"}]},...base});
+ mk("c2",{type:"bar",data:{labels:R.pr.map(d=>d.s.title.split(" ").slice(0,2).join(" ")),datasets:[{data:R.pr.map(d=>d.p),backgroundColor:"#f6c63c"}]},...base});
+ mk("c3",{type:"bar",data:{labels:names,datasets:[{label:"Frequency rank",data:R.fr.map(d=>d.fr),backgroundColor:"#d6361f"},{label:"PageRank rank",data:R.fr.map(d=>d.pr),backgroundColor:"#f6c63c"}]},options:{responsive:true,scales:{y:{reverse:true,beginAtZero:true,ticks:{stepSize:1}}}}});
+ const pal=["#d6361f","#f08a24","#f6c63c","#2f9d55","#3b82c4","#9b59b6"];
+ mk("c4",{type:"line",data:{labels:["Frequency","PageRank"],datasets:R.fr.map((d,i)=>({label:d.s.title,data:[d.fr,d.pr],borderColor:pal[i],backgroundColor:pal[i],tension:.2}))},options:{responsive:true,plugins:{legend:{position:"bottom"}},scales:{y:{reverse:true,ticks:{stepSize:1},title:{display:true,text:"rank (1 = top)"}}}}});
+}
+
+/* ---------- LINK GRAPH (SVG, positions on a ring) ---------- */
+function graph(){
+ const svg=$("gsvg"),C=["#d6361f","#f08a24","#f6c63c","#2f9d55","#3b82c4","#9b59b6"],cx=300,cy=220,pos=SITES.map((s,i)=>[cx+170*Math.cos(i*Math.PI/3-Math.PI/2),cy+160*Math.sin(i*Math.PI/3-Math.PI/2)]);
+ const rad=i=>22+PR.scores[i]*130,idx=Object.fromEntries(SITES.map((s,i)=>[s.id,i]));
+ let h=`<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#8a7a6a"/></marker></defs>`;
+ SITES.forEach((s,i)=>s.out.forEach(t=>{const j=idx[t],dx=pos[j][0]-pos[i][0],dy=pos[j][1]-pos[i][1],L=Math.hypot(dx,dy);
+  h+=`<line x1="${pos[i][0]+dx/L*rad(i)}" y1="${pos[i][1]+dy/L*rad(i)}" x2="${pos[j][0]-dx/L*(rad(j)+4)}" y2="${pos[j][1]-dy/L*(rad(j)+4)}" stroke="#8a7a6a" stroke-width="2" marker-end="url(#ar)"/>`}));
+ SITES.forEach((s,i)=>h+=`<g class="n" data-i="${i}" style="animation-delay:${i*120}ms;transform-origin:${pos[i][0]}px ${pos[i][1]}px"><circle cx="${pos[i][0]}" cy="${pos[i][1]}" r="${rad(i)}" fill="${C[i]}" stroke="#2b2522" stroke-width="2"/><text x="${pos[i][0]}" y="${pos[i][1]+4}" text-anchor="middle" font-size="12" font-weight="700" fill="#2b2522">${PR.scores[i].toFixed(3)}</text><text x="${pos[i][0]}" y="${pos[i][1]+rad(i)+15}" text-anchor="middle" font-size="12" fill="currentColor">${s.title}</text></g>`);
+ svg.innerHTML=h;svg.style.color="var(--ink)";
+ const info=i=>{const s=SITES[i],inc=SITES.filter(x=>x.out.includes(s.id));$("ginfo").innerHTML=`<h3>${s.title}</h3><div class="url">${s.id}</div><p>${s.desc}</p><p><b>PageRank:</b> ${PR.scores[i].toFixed(4)}</p><p><b>Incoming (${inc.length}):</b> ${inc.map(x=>x.title).join(", ")||"none"}</p><p><b>Outgoing (${s.out.length}):</b> ${s.out.map(t=>SITES[idx[t]].title).join(", ")}</p>`};
+ svg.querySelectorAll("g.n").forEach(g=>{g.onmouseenter=g.onclick=()=>info(+g.dataset.i)});
+}
+
+/* ---------- HOME WIDGETS ---------- */
+let pi=0;setInterval(()=>{$("q").placeholder=PH[pi++%5]},2600);$("q").placeholder="Search something cheesy…";
+let mi=0;const meme=()=>$("meme").textContent=MEMES[mi++%MEMES.length];meme();setInterval(meme,5000);
+const hungry=()=>{const k=Math.floor(Math.random()*4);$("ms").textContent=HUNGER[k];$("mt").style.width=(k+1)*25+"%"};$("mb").onclick=hungry;setTimeout(hungry,300);
+const fact=()=>$("fact").textContent=FACTS[Math.floor(Math.random()*FACTS.length)];fact();$("fb").onclick=fact;
+$("egg").textContent="Google indexes websites. We index cravings.";$("about-egg").textContent="Ranking websites is easier than deciding what to order.";
+chips($("trend"),TREND);
+$("go").onclick=()=>search($("q").value);$("go2").onclick=()=>search($("q2").value);
+$("clr").onclick=()=>{$("q").value="";$("q").focus()};
+[$("q"),$("q2")].forEach(i=>i.onkeydown=e=>{if(e.key==="Enter")search(i.value)});
+$("rnd").onclick=()=>search(TREND[Math.floor(Math.random()*TREND.length)]);
+document.querySelectorAll("#mod button").forEach(b=>b.onclick=()=>{$("mod").classList.remove("on");$("summary").insertAdjacentHTML("afterbegin",`<div class="banner">${b.dataset.t}</div>`);confetti(16)});
+$("theme").onclick=()=>{const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dark?"light":"dark";if($("analytics").classList.contains("on"))setTimeout(charts_,50)};
+for(let i=0;i<6;i++){const f=document.createElement("span");f.className="float";f.textContent="🍕";f.style.left=Math.random()*95+"vw";f.style.top=Math.random()*85+"vh";f.style.animationDelay=i+"s";document.body.append(f)}
+results();show("home");
+</script></body></html>
